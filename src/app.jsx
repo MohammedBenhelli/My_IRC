@@ -20,7 +20,7 @@ export default class App extends React.Component {
     render() {
         return (
             <>
-                test {this.state.connect}
+                {this.state.connect}
             </>
         );
     };
