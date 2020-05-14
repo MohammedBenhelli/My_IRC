@@ -4,12 +4,13 @@ import React from "react";
 import hbs from "handlebars";
 import ReactDOMServer from 'react-dom/server';
 import fs from "fs";
+const port = process.env.PORT || 4242;
 const app = express();
 const http = require("http");
 const server = http.createServer(app);
 const io = require("socket.io")(server);
 
-io.on("connection", (socket) => {
+io.on("connect", (socket) => {
     console.log("New client connected");
     socket.emit("connect", "hello world");
     socket.on("disconnect", () => {
@@ -24,6 +25,6 @@ app.get("/", (req, res) => {
     res.send(hbsTemplate({react: reactComp}));
 });
 
-app.listen(4242, () => {
+app.listen(port, () => {
     console.log("Server listening on port 4242");
 });
