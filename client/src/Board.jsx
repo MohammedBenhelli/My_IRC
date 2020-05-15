@@ -5,23 +5,19 @@ export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            irc: "test"
+            username: props.username
         };
     };
 
     componentDidMount() {
-        socket.on("connect", this.getIrc);
-    };
-
-    getIrc = irc => {
-        this.setState({connect: irc});
+        socket.emit("getBoard", "");
     };
 
     render() {
-        return (
+        return(
             <>
-                {this.state.connect}
+                <h2>Hello {this.state.username}</h2>
             </>
-        );
+        )
     };
 };
