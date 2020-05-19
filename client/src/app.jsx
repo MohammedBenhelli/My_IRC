@@ -27,6 +27,7 @@ export default class App extends React.Component {
 
     sendUsername = (e) => {
         e.preventDefault();
+        socket.emit("name", this.state.username);
         console.log(this.state.username);
         this.setState({irc: true});
     };
