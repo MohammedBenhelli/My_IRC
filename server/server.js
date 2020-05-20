@@ -28,5 +28,6 @@ io.on("connect", (socket) => {
         socket.emit("board", JSON.stringify(board));
         console.log(board)
     });
+    socket.on("getBoardMessages", (val) => socket.emit("sendBoardMessages", JSON.stringify(board.filter(x => x.name === val))));
     socket.on("chat", (val) => board.push({name: val, messages: []}));
 });

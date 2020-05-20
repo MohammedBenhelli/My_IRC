@@ -19,6 +19,12 @@ export default class App extends React.Component {
         })
     };
 
+    changeChannel = (e) => {
+        console.log(e.target.innerHTML);
+        socket.emit("getBoardMessages", e.target.innerHTML);
+        socket.on("sendBoardMessages", (val) => console.log(val));
+    }
+
     setChat = (e) => {
         this.setState({newChat: document.getElementById("chat").value})
     };
@@ -26,6 +32,7 @@ export default class App extends React.Component {
     sendChat = (e) => {
         e.preventDefault();
         socket.emit("chat", this.state.newChat);
+        socket.emit("getBoard", "");
     };
 
     render() {
@@ -36,7 +43,7 @@ export default class App extends React.Component {
                     <Col>
                         <Form>
                             <Form.Group controlId="chat">
-                                <Form.Label>Username:</Form.Label>
+                                <Form.Label>New channel:</Form.Label>
                                 <Form.Control onChange={this.setChat} type="text" placeholder="Enter an chat name" />
                             </Form.Group>
                             <Button onClick={this.sendChat} variant="primary">
@@ -45,10 +52,10 @@ export default class App extends React.Component {
                         </Form>
                     </Col>
                     <Col>
-                        Chat List
+                        Channel
                         {
                             this.state.chat.map((x, i) =>
-                                <p key={i}>{x.name}</p>
+                                <p style={{cursor: "pointer"}} onClick={this.changeChannel} className="text-secondary" key={i}>{x.name}</p>
                             )
                         }
                     </Col>
