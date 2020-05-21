@@ -15,6 +15,8 @@ export default class App extends React.Component {
 
     componentDidMount() {
         // socket.emit("connect", this.getIrc("oui"));
+        socket.on("/errorNick", () => alert("Username already taken!"));
+        socket.on("/newNick", () => this.setState({irc: true}));
     };
 
     getIrc = irc => {
@@ -27,9 +29,8 @@ export default class App extends React.Component {
 
     sendUsername = (e) => {
         e.preventDefault();
-        socket.emit("name", this.state.username);
+        socket.emit("/nick", this.state.username);
         console.log(this.state.username);
-        this.setState({irc: true});
     };
 
     render() {

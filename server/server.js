@@ -14,12 +14,18 @@ let board =
         messages: ["hello world"]
     }]
 ;
-
+let nicknames = {};
+//TODO: secure disconnect et changeNick
 io.on("connect", (socket) => {
     console.log("New client connected");
     socket.emit("connect", "hello world");
-    socket.on("name", (val) => {
-        console.log(val);
+    socket.on("/nick", (val) => {
+        if (nicknames[val] === undefined){
+            socket.nickname = val;
+            nicknames[val] = val;
+            socket.emit("/newNick");
+        }
+        else socket.emit("/errorNick")
     });
     socket.on("disconnect", () => {
         console.log("Client disconnected");
