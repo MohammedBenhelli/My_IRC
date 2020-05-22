@@ -1,6 +1,6 @@
 const port = process.env.PORT || 4242;
-const express = require('express');
-const cors = require("cors");
+import express from 'express';
+import cors from "cors";
 const app = express();
 app.use(cors());
 const server = app.listen(port, () => {
@@ -8,11 +8,13 @@ const server = app.listen(port, () => {
 });
 const io = require('socket.io')(server)
 
-let board =
-    [{
+let board ={
+    home: {
         name: "home",
-        messages: ["hello world"]
-    }]
+        messages: ["hello world"],
+        autor: "Admin"
+    }
+}
 ;
 let nicknames = {};
 //TODO: secure disconnect et changeNick
@@ -21,19 +23,27 @@ io.on("connect", (socket) => {
     socket.emit("connect", "hello world");
     socket.on("/nick", (val) => {
         if (nicknames[val] === undefined){
-            socket.nickname = val;
+            if (socket.username !== undefined)
+                delete nicknames[socket.username];
+            socket.username = val;
             nicknames[val] = val;
             socket.emit("/newNick");
         }
         else socket.emit("/errorNick")
     });
     socket.on("disconnect", () => {
-        console.log("Client disconnected");
+        console.log(`${socket.username} disconnected`);
+        delete nicknames[socket.username];
+
     });
     socket.on("getBoard", () => {
         socket.emit("board", JSON.stringify(board));
         console.log(board)
     });
     socket.on("getBoardMessages", (val) => socket.emit("sendBoardMessages", JSON.stringify(board.filter(x => x.name === val))));
-    socket.on("chat", (val) => board.push({name: val, messages: []}));
+    socket.on("chat", (val) => {
+        if (board[val] === undefined)
+            board[val] = {name: val, messages: [], autor: socket.username};
+        else socket.emit("/errorBoard");
+    });
 });

@@ -16,7 +16,8 @@ export default class App extends React.Component {
         socket.emit("getBoard", "");
         socket.on("board", (val) =>{
             this.setState({chat: JSON.parse(val)});
-        })
+        });
+        socket.on("/errorBoard", () => alert("This board already exists!"));
     };
 
     changeChannel = (e) => {
@@ -54,8 +55,8 @@ export default class App extends React.Component {
                     <Col>
                         Channel
                         {
-                            this.state.chat.map((x, i) =>
-                                <p style={{cursor: "pointer"}} onClick={this.changeChannel} className="text-secondary" key={i}>{x.name}</p>
+                            Object.keys(this.state.chat).map((x, i) =>
+                                <p style={{cursor: "pointer"}} onClick={this.changeChannel} className="text-secondary" key={i}>{this.state.chat[x].name}</p>
                             )
                         }
                     </Col>
