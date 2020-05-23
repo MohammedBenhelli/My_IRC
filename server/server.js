@@ -11,7 +11,10 @@ const io = require('socket.io')(server)
 let board ={
     home: {
         name: "home",
-        messages: ["hello world"],
+        messages: [{
+            text: "hello world",
+            autor: "admin"
+        }],
         autor: "Admin"
     }
 }
@@ -40,7 +43,10 @@ io.on("connect", (socket) => {
         socket.emit("board", JSON.stringify(board));
         console.log(board)
     });
-    socket.on("getBoardMessages", (val) => socket.emit("sendBoardMessages", JSON.stringify(board.filter(x => x.name === val))));
+    socket.on("getBoardMessages", (val) => socket.emit("sendBoardMessages", 
+        // JSON.stringify(Object.keys(board).filter(x => board[x].name === val))
+        JSON.stringify(board[val])
+        ));
     socket.on("chat", (val) => {
         if (board[val] === undefined)
             board[val] = {name: val, messages: [], autor: socket.username};

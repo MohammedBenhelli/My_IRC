@@ -1,14 +1,16 @@
 import React from "react";
 import socket from "./socket";
 import { Form, Button, Col, Container, Row } from "react-bootstrap";
+import Message from "./message";
 
-export default class App extends React.Component {
+export default class Board extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             username: props.username,
             chat: [],
-            newChat: ""
+            newChat: "",
+            messages: [{text: "test"}]
         };
     };
 
@@ -21,9 +23,11 @@ export default class App extends React.Component {
     };
 
     changeChannel = (e) => {
-        console.log(e.target.innerHTML);
         socket.emit("getBoardMessages", e.target.innerHTML);
-        socket.on("sendBoardMessages", (val) => console.log(val));
+        socket.on("sendBoardMessages", (val) => {
+            this.setState({ messages: JSON.parse(val).messages });
+            console.log(this.state.messages)
+        });
     }
 
     setChat = (e) => {
@@ -51,6 +55,9 @@ export default class App extends React.Component {
                                 Create
                             </Button>
                         </Form>
+                    </Col>
+                    <Col>
+                        <Message username={this.state.username} messages={JSON.stringify(this.state.messages)}/>
                     </Col>
                     <Col>
                         Channel
