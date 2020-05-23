@@ -37,19 +37,19 @@ io.on("connect", (socket) => {
     socket.on("disconnect", () => {
         console.log(`${socket.username} disconnected`);
         delete nicknames[socket.username];
-
     });
     socket.on("getBoard", () => {
         socket.emit("board", JSON.stringify(board));
         console.log(board)
     });
-    socket.on("getBoardMessages", (val) => socket.emit("sendBoardMessages", 
-        // JSON.stringify(Object.keys(board).filter(x => board[x].name === val))
-        JSON.stringify(board[val])
-        ));
+    socket.on("getBoardMessages", (val) => socket.emit("sendBoardMessages", JSON.stringify(board[val])));
     socket.on("chat", (val) => {
         if (board[val] === undefined)
             board[val] = {name: val, messages: [], autor: socket.username};
         else socket.emit("/errorBoard");
+    });
+    socket.on("newMessage", (val) => {
+        board[val.board].messages.push({autor: val.autor, text: val.message});
+        io.sockets.emit("refreshBoard", val.board);
     });
 });

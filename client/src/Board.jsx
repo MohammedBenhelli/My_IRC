@@ -10,7 +10,8 @@ export default class Board extends React.Component {
             username: props.username,
             chat: [],
             newChat: "",
-            messages: [{text: "test"}]
+            messages: [],
+            board: ""
         };
     };
 
@@ -23,10 +24,15 @@ export default class Board extends React.Component {
     };
 
     changeChannel = (e) => {
+        this.setState({board: e.target.innerHTML});
         socket.emit("getBoardMessages", e.target.innerHTML);
         socket.on("sendBoardMessages", (val) => {
-            this.setState({ messages: JSON.parse(val).messages });
+            this.setState({messages: JSON.parse(val).messages});
             console.log(this.state.messages)
+        });
+        socket.on("refreshBoard", (val) => {
+            if(val === this.state.board);
+            socket.emit("getBoardMessages", this.state.board);
         });
     }
 
@@ -57,7 +63,7 @@ export default class Board extends React.Component {
                         </Form>
                     </Col>
                     <Col>
-                        <Message username={this.state.username} messages={JSON.stringify(this.state.messages)}/>
+                        <Message username={this.state.username} board={this.state.board} messages={JSON.stringify(this.state.messages)}/>
                     </Col>
                     <Col>
                         Channel
