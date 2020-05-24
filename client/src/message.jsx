@@ -1,6 +1,6 @@
 import React from "react";
 import socket from "./socket";
-import { Form, Button, Col, Container, Row, Card } from "react-bootstrap";
+import {Form, Button, Col, Container, Row, Card} from "react-bootstrap";
 
 export default class Message extends React.Component {
     constructor(props) {
@@ -14,8 +14,8 @@ export default class Message extends React.Component {
         };
     };
 
-    componentWillReceiveProps(props){
-        if(props.messages !== this.state.messages)
+    componentWillReceiveProps(props) {
+        if (props.messages !== this.state.messages)
             this.setState({messages: JSON.parse(props.messages), board: props.board});
     };
 
@@ -34,22 +34,27 @@ export default class Message extends React.Component {
     };
 
     render() {
-        return (
+        if (Object.keys(this.state.messages).length > 0)
+            return (
+                <>
+                    {Object.keys(this.state.messages).map((x, i) =>
+                        <Card key={i}>
+                            <Card.Subtitle>{this.state.messages[x].autor}</Card.Subtitle>
+                            <Card.Body>{this.state.messages[x].text}</Card.Body>
+                        </Card>
+                    )}
+                    <Form>
+                        <Form.Group controlId="message">
+                            <Form.Control onChange={this.setMessage} type="text" placeholder="Enter an new message"/>
+                        </Form.Group>
+                        <Button onClick={this.sendMessage} variant="primary">
+                            Send
+                        </Button>
+                    </Form>
+                </>
+            );
+        else return (
             <>
-                {Object.keys(this.state.messages).map( (x, i) => 
-                    <Card key={i}>
-                        <Card.Subtitle>{this.state.messages[x].autor}</Card.Subtitle>
-                        <Card.Body>{this.state.messages[x].text}</Card.Body>
-                    </Card>
-                )}
-                 <Form>
-                    <Form.Group controlId="message">
-                        <Form.Control onChange={this.setMessage} type="text" placeholder="Enter an new message" />
-                    </Form.Group>
-                    <Button onClick={this.sendMessage} variant="primary">
-                        Send
-                    </Button>
-                </Form>
             </>
         );
     }
